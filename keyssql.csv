@@ -1,0 +1,89 @@
+﻿Palavras-chave para SQL:
+SELECT
+FROM
+WHERE
+GROUP BY
+HAVING
+ORDER BY
+INNER JOIN
+LEFT JOIN
+RIGHT JOIN
+OUTER JOIN
+ON
+INSERT INTO
+UPDATE
+DELETE
+CREATE TABLE
+ALTER TABLE
+DROP TABLE
+CASE
+WHEN
+THEN
+ELSE
+END
+AND
+OR
+NOT
+COUNT
+SUM
+AVG
+MAX
+MIN
+DISTINCT
+UNION
+INTO
+VALUES
+JOIN
+AS
+ON
+Palavras-chave para PySpark:
+df.select
+df.withColumn
+col
+alias
+agg
+filter
+groupBy
+orderBy
+join
+distinct
+union
+pivot
+explode
+window
+udf
+expr
+when
+otherwise
+lit
+struct
+array
+map
+explode
+get_json_object
+from_json
+to_json
+partitionBy
+mode
+save
+overwrite
+append
+errorIfExists
+ignore
+readStream
+writeStream
+format
+start
+awaitTermination
+outputMode
+trigger
+output
+queryName
+schema
+structType
+arrayType
+stringType
+integerType
+floatType
+doubleType
+booleanType

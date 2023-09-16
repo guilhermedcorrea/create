@@ -1,0 +1,37 @@
+﻿querysql;tipo;pyspark
+select nome, idade from pessoa;select;"df.select(""valor"",""valor"").show()"
+elect produto, preco from produtos;select;"df.select(""valor"",""valor"").show()"
+"MERGE INTO [dbo].[vendas_pedidos] A
+USING [BIGDATA].[dbo].[pedidos_valores] B
+ON A.Vendaid = B.Vendaid
+WHEN MATCHED THEN
+    UPDATE SET A.totalVenda = (SELECT SUM(totalVenda) FROM [dbo].[vendas_pedidos] WHERE unidadeId = A.unidadeId);";merge;"deltaTablePeople.alias('people') \
+  .merge(
+    dfUpdates.alias('updates'),
+    'people.id = updates.id'
+  ) \
+  .whenMatchedUpdate(set =
+    {
+      ""id"": ""updates.id"",
+      ""firstName"": ""updates.firstName"",
+      ""middleName"": ""updates.middleName"",
+      ""lastName"": ""updates.lastName"",
+      ""gender"": ""updates.gender"",
+      ""birthDate"": ""updates.birthDate"",
+      ""ssn"": ""updates.ssn"",
+      ""salary"": ""updates.salary""
+    }
+  ) \
+  .whenNotMatchedInsert(values =
+    {
+      ""id"": ""updates.id"",
+      ""firstName"": ""updates.firstName"",
+      ""middleName"": ""updates.middleName"",
+      ""lastName"": ""updates.lastName"",
+      ""gender"": ""updates.gender"",
+      ""birthDate"": ""updates.birthDate"",
+      ""ssn"": ""updates.ssn"",
+      ""salary"": ""updates.salary""
+    }
+  ) \
+  .execute()"
