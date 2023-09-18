@@ -1,0 +1,171 @@
+codigo;tipo;funcao
+"MERGE INTO target_table AS target
+USING source_table AS source
+ON target.id = source.id
+WHEN MATCHED THEN UPDATE SET target.value = source.value
+WHEN NOT MATCHED THEN INSERT (id, value) VALUES (source.id, source.value);";sql;merge
+"MERGE INTO target_table AS target
+USING source_table1 AS source1
+ON target.id = source1.id
+WHEN MATCHED THEN UPDATE SET target.value = source1.value
+WHEN NOT MATCHED THEN INSERT (id, value) VALUES (source1.id, source1.value)
+FROM source_table2 AS source2
+WHERE source2.id = target.id;";sql;merge
+"UPDATE products
+SET price = price * 1.1
+WHERE category = 'Electronics';";sql;update
+"from delta.tables import DeltaTable
+
+deltaTable = DeltaTable.forPath(spark, ""delta_target_table"")
+
+deltaTable.alias(""target"").merge(
+    source=source_dataframe.alias(""source""),
+    condition=""target.id = source.id"") \
+  .whenMatchedUpdateAll() \
+  .whenNotMatchedInsertAll() \
+  .execute()";spark;merge
+"from delta.tables import DeltaTable
+
+deltaTable = DeltaTable.forPath(spark, ""delta_target_table"")
+
+deltaTable.alias(""target"").merge(
+    source=source_dataframe1.alias(""source1""),
+    condition=""target.id = source1.id"") \
+  .whenMatchedUpdateAll() \
+  .whenNotMatchedInsertAll() \
+  .source(source_dataframe2.alias(""source2"")) \
+  .whenMatchedUpdateAll(condition=""source2.id = target.id"") \
+  .execute()";spark;merge
+"from delta.tables import DeltaTable
+
+deltaTable = DeltaTable.forPath(spark, ""delta_table"")
+
+deltaTable.update(
+    condition=""category = 'Electronics'"",
+    set={""price"": expr(""price * 1.1"")})";spark;update
+"from delta.tables import DeltaTable
+
+deltaTable = DeltaTable.forPath(spark, ""delta_table"")
+
+deltaTable.delete(""order_date < '2023-01-01'"")";spark;delete
+"SELECT employees.employee_name, departments.department_name
+FROM employees
+INNER JOIN departments ON employees.department_id = departments.department_id;";sql;select
+"SELECT customers.customer_name, orders.order_date
+FROM customers
+LEFT JOIN orders ON customers.customer_id = orders.customer_id;";sql;select
+"from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName(""ExemploJoin"").getOrCreate()
+
+customers = spark.createDataFrame([(1, ""Alice""), (2, ""Bob""), (3, ""Charlie"")], [""customer_id"", ""customer_name""])
+orders = spark.createDataFrame([(1, ""2023-01-01""), (2, ""2023-01-02"")], [""customer_id"", ""order_date""])
+
+result = customers.join(orders, ""customer_id"", ""inner"")
+result.show()";spark;create table
+"result = customers.join(orders, ""customer_id"", ""left"")
+result.show()";spark;join
+"from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName(""ExemploSelect"").getOrCreate()
+
+df = spark.createDataFrame([(1, ""Alice"", 25), (2, ""Bob"", 30)], [""id"", ""name"", ""age""])
+
+selected_df = df.select(""name"", ""age"")
+selected_df.show()";spark;select
+"from pyspark.sql import SparkSession
+from pyspark.sql.functions import expr
+
+spark = SparkSession.builder.appName(""ExemploSelectExpr"").getOrCreate()
+
+df = spark.createDataFrame([(1, ""Alice"", 25), (2, ""Bob"", 30)], [""id"", ""name"", ""age""])
+
+selected_df = df.select(""name"", expr(""age + 5"").alias(""new_age""))
+selected_df.show()";spark;select
+"SELECT department_name
+FROM departments
+WHERE department_id IN (SELECT department_id FROM employees WHERE salary > 50000);";sql;select
+"SELECT employee_name
+FROM employees e
+WHERE salary > (SELECT AVG(salary) FROM employees WHERE department_id = e.department_id);";sql;select
+"from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName(""ExemploSubquery"").getOrCreate()
+
+employees = spark.createDataFrame([(1, ""Alice"", 50000, 1), (2, ""Bob"", 60000, 2)], [""employee_id"", ""employee_name"", ""salary"", ""department_id""])
+
+departments = spark.createDataFrame([(1, ""HR""), (2, ""Finance"")], [""department_id"", ""department_name""])
+
+employees.createOrReplaceTempView(""employees"")
+departments.createOrReplaceTempView(""departments"")
+
+result = spark.sql(""""""
+    SELECT department_name
+    FROM departments
+    WHERE department_id IN (SELECT department_id FROM employees WHERE salary > 50000)
+"""""")
+result.show()";sql;select
+"result = spark.sql(""""""
+    SELECT employee_name
+    FROM employees e
+    WHERE salary > (SELECT AVG(salary) FROM employees WHERE department_id = e.department_id)
+"""""")
+result.show()";sql;select
+"from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType
+
+spark = SparkSession.builder.appName(""ExemploSchema"").getOrCreate()
+
+# Definindo um schema para um DataFrame
+schema = StructType([
+    StructField(""nome"", StringType(), True),
+    StructField(""idade"", IntegerType(), True),
+    StructField(""salario"", DoubleType(), True)
+])
+
+# Criando um DataFrame com o schema especificado
+data = [(""Alice"", 30, 50000.0), (""Bob"", 25, 60000.0)]
+df = spark.createDataFrame(data, schema=schema)
+
+# Exibindo o DataFrame
+df.show()";sql;create table
+"from pyspark.sql import SparkSession
+from pyspark.sql.functions import col
+from pyspark.sql.types import StringType, IntegerType
+
+spark = SparkSession.builder.appName(""ExemploConversaoTipos"").getOrCreate()
+
+# Criando um DataFrame de exemplo
+data = [(""Alice"", ""30"", ""50000""), (""Bob"", ""25"", ""60000"")]
+df = spark.createDataFrame(data, [""nome"", ""idade"", ""salario""])
+
+# Convertendo colunas para tipos de dados específicos
+df = df.withColumn(""idade"", df[""idade""].cast(IntegerType()))
+df = df.withColumn(""salario"", df[""salario""].cast(IntegerType()))
+
+# Exibindo o DataFrame com tipos de dados convertidos
+df.show()";sql;create table
+SELECT * FROM customers WHERE country = 'USA';sql;select
+SELECT product_name, unit_price FROM products WHERE unit_price > 50;sql;select
+SELECT COUNT(*) FROM orders WHERE order_date >= '2023-01-01';sql;select
+SELECT first_name, last_name, email FROM employees WHERE department = 'Sales';sql;select
+SELECT AVG(order_total) FROM orders WHERE order_date BETWEEN '2023-01-01' AND '2023-12-31';sql;select
+SELECT customers.customer_name, orders.order_date FROM customers JOIN orders ON customers.customer_id = orders.customer_id  ;sql;select
+CREATE TABLE employees (employee_id INT, employee_name VARCHAR(255), department VARCHAR(255));sql;create table
+CREATE TABLE suppliers (supplier_id INT, supplier_name VARCHAR(255), product_id INT);sql;create table
+CREATE TABLE products (product_id INT, product_name VARCHAR(255), price DECIMAL(10, 2))  ;sql;create table
+SELECT customers.customer_name, orders.order_date FROM customers JOIN orders ON customers.customer_id = orders.customer_id;sql;select
+MERGE INTO target_table AS target USING source_table AS source ON target.id = source.id WHEN MATCHED THEN UPDATE SET target.value = source.value WHEN NOT MATCHED THEN INSERT (id, value) VALUES (source.id, source.value)   ;sql;merge
+SELECT product_name, CASE WHEN price > 100 THEN 'Expensive' ELSE 'Affordable' END AS price_category FROM products;sql;select
+SELECT order_date, CASE WHEN total_sales > 1000 THEN 'High' WHEN total_sales > 500 THEN 'Medium' ELSE 'Low' END AS sales_category FROM sales;sql;select
+"spark.sql(\""SELECT product_name, unit_price FROM products WHERE unit_price > 50\"")";spark;select
+"spark.sql(\""SELECT COUNT(*) FROM orders WHERE order_date >= '2023-01-01'\"")";spark;select
+"spark.sql(\""SELECT first_name, last_name, email FROM employees WHERE department = 'Sales'\"")";spark;select
+"spark.sql(\""SELECT AVG(order_total) FROM orders WHERE order_date BETWEEN '2023-01-01' AND '2023-12-31'\"")  ";spark;select
+"spark.sql(\""CREATE TABLE employees (employee_id INT, employee_name STRING, department STRING)\"")";spark;create table
+"spark.sql(\""CREATE TABLE suppliers (supplier_id INT, supplier_name STRING, product_id INT)\"")";spark;create table
+"spark.sql(\""CREATE TABLE products (product_id INT, product_name STRING, price DECIMAL(10, 2))\"")";spark;create table
+"df.select(df.name, (df.age + 10).alias('age')).collect()""";spark;select
+"SELECT first_name, last_name, email FROM employees WHERE department = 'Sales'"",";sql;select
+"spark.sql(\""SELECT COUNT(*) FROM orders WHERE order_date >= '2023-01-01'\"")"",";spark;select
+"spark.sql(\""SELECT AVG(order_total) FROM orders WHERE order_date BETWEEN '2023-01-01' AND '2023-12-31'\"")";spark;select

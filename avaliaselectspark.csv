@@ -1,0 +1,7 @@
+codigo
+"df.select(""firstname"",""lastname"").show()"
+df.select(df.firstname,df.lastname).show()
+"df.select(df[""firstname""],df[""lastname""]).show()"
+from pyspark.sql.functions import col
+"df.select(col(""firstname""),col(""lastname"")).show()"
+"df.select(df.colRegex(""`^.*name*`"")).show()"
